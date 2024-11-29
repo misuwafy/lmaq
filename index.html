@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Data Search</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+        .footer {
+            text-align: center;
+            padding: 1em;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e7e7e7;
+            margin-top: auto;  /* Ensures footer stays at the bottom */
+        }
+    </style>
+</head>
+<body>
+    <div class="container content">
+        <h1 class="mt-5">Saudi Data Search</h1>
+        <div class="form-group mt-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search Region/City/Dist">
+        </div>
+        <table class="table table-striped mt-3" id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Region (AR)</th>
+                    <th>Region (EN)</th>
+                    <th>City (AR)</th>
+                    <th>City (EN)</th>
+                    <th>District (AR)</th>
+                    <th>District (EN)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will be inserted here -->
+            </tbody>
+        </table>
+        <p class="mt-3" id="noResults" style="display: none;">No results found.</p>
+    </div>
+    <footer class="footer">
+        <p>Public Data from Saudi National Map</p>
+        <p>&copy; 2024 @mushkott</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchInput').on('input', function() {
+                var query = $(this).val();
+                $.get('/search', { query: query }, function(data) {
+                    var tableBody = $('#resultsTable tbody');
+                    tableBody.empty();
+                    if (data.length > 0) {
+                        $('#noResults').hide();
+                        data.forEach(function(row) {
+                            var newRow = '<tr>' +
+                                '<td>' + row['RegionAR'] + '</td>' +
+                                '<td>' + row['RegionEN'] + '</td>' +
+                                '<td>' + row['CityAR'] + '</td>' +
+                                '<td>' + row['CityEN'] + '</td>' +
+                                '<td>' + row['DistAR'] + '</td>' +
+                                '<td>' + row['DistEN'] + '</td>' +
+                                '</tr>';
+                            tableBody.append(newRow);
+                        });
+                    } else {
+                        $('#noResults').show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
